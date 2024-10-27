@@ -49,6 +49,7 @@ jobs:
 
       - name: Clone Source Code
         run:
+          echo "Start clone"
           git clone https://github.com/coolsnowwolf/lede
           cd lede
           cp $CONFIG_FILE ./.config
