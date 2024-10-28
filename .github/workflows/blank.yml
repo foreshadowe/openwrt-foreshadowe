@@ -53,11 +53,8 @@ jobs:
           echo "Clone lede project"
           git clone https://github.com/coolsnowwolf/lede
           echo "Copy .config && feeds.conf.default"
-          rm -f ./lede/.config
           rm -f ./lede/feeds.conf.default
-          cp $CONFIG_FILE ./lede/.config
           cp $FEED_FILE ./lede/feeds.conf.default
-          cd lede
           
       - name: Compile
         run: |
@@ -74,10 +71,10 @@ jobs:
           echo "Old"
           sed -i 's/192.168.1.1/10.0.0.2/g' package/base-files/files/bin/config_generate
           echo "Test sed theme"
-          echo "New"
-          sed -i "s/luci-theme-bootstrap/luci-theme-design/g" feeds/luci/collections/luci-light/Makefile
           echo "Old"
           sed -i "s/luci-theme-bootstrap/luci-theme-design/g" feeds/luci/collections/luci/Makefile
+          rm -f ./.config
+          cp $CONFIG_FILE ./.config
           echo "make defconfig"
           make defconfig
           echo "make download -j8"
