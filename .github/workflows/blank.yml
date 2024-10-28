@@ -74,7 +74,9 @@ jobs:
           echo "Old"
           sed -i "s/luci-theme-bootstrap/luci-theme-design/g" feeds/luci/collections/luci/Makefile
           rm -f ./.config
-          cp $CONFIG_FILE ./.config
+          cd ..
+          cp $CONFIG_FILE ./lede/.config
+          cd lede
           echo "make defconfig"
           make defconfig
           echo "make download -j8"
