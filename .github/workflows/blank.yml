@@ -18,6 +18,7 @@ env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   CONFIG_FILE: configs/rpi4.config
+  FEED_FILE: configs/feeds.conf.default
   EXTRA_CONFIG: configs/extra.config
   DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: arm64
@@ -49,19 +50,40 @@ jobs:
 
       - name: Clone Source Code
         run: |
-          echo "Start clone"
+          echo "Clone lede project"
           git clone https://github.com/coolsnowwolf/lede
-          echo $CONFIG_FILE
+          echo "Copy .config && feeds.conf.default"
+          rm -f ./lede/.config
+          rm -f ./lede/feeds.conf.default
           cp $CONFIG_FILE ./lede/.config
+          cp $FEED_FILE ./lede/feeds.conf.default
           cd lede
+          
       - name: Compile
-          make defconfig > /dev/null 2>&1
+        run: |
+          echo "./scripts/feeds clean"
           ./scripts/feeds clean
+          echo "./scripts/feeds update -a"
           ./scripts/feeds update -a
+          echo "./scripts/feeds install -a"
           ./scripts/feeds install -a
+          echo "Test sed IP command"
+          echo "New"
+          sed -i 's/192.168.1.1/10.0.0.2/g' package/base-files/luci2/bin/config_generate
+          echo "Old"
+          sed -i 's/192.168.1.1/10.0.0.2/g' package/base-files/files/bin/config_generate
+          echo "Test sed theme"
+          echo "New"
+          sed -i "s/luci-theme-bootstrap/luci-theme-design/g" feeds/luci/collections/luci-light/Makefile
+          echo "Old"
+          sed -i "s/luci-theme-bootstrap/luci-theme-design/g" feeds/luci/collections/luci/Makefile
+          echo "make defconfig"
           make defconfig
+          echo "make download -j8"
           make download -j8
+          echo "find dl -size -1024c -exec ls -l {} \;"
           find dl -size -1024c -exec ls -l {} \;
+          echo "find dl -size -1024c -exec rm -f {} \;"
           find dl -size -1024c -exec rm -f {} \;
           echo -e "$(nproc) thread compile"
           make -j$(nproc) || make -j1 || make -j1 V=s
