@@ -61,6 +61,7 @@ jobs:
           
       - name: Compile
         run: |
+          cd lede
           echo "./scripts/feeds clean"
           ./scripts/feeds clean
           echo "./scripts/feeds update -a"
