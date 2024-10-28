@@ -25,6 +25,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
+  FIRMWARE_RELEASE_UPLOAD: true
   FIRMWARE_TAG: RaspberryPi4
   TZ: Asia/Shanghai
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -33,6 +34,16 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-20.04
+    
+    outputs:
+      OPENWRT_ROOT_PATH: ${{ steps.clone.outputs.OPENWRT_ROOT_PATH }}
+      CURRENT_BRANCH: ${{ steps.env.outputs.CURRENT_BRANCH }}
+      SOURCE_OWNER: ${{ steps.env.outputs.SOURCE_OWNER }}
+      SOURCE_REPO: ${{ steps.env.outputs.SOURCE_REPO }}
+      DEVICE_PLATFORM: ${{ steps.env.outputs.DEVICE_PLATFORM }}
+      DEVICE_TARGET: ${{ steps.env.outputs.DEVICE_TARGET }}
+      DEVICE_SUBTARGET: ${{ steps.env.outputs.DEVICE_SUBTARGET }}
+      TOOLCHAIN_IMAGE: ${{ steps.env.outputs.TOOLCHAIN_IMAGE }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -90,4 +101,17 @@ jobs:
           echo "status=success" >> $GITHUB_OUTPUT
           echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
           echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
+          
+      - name: Deploy Files To Release
+        uses: ncipollo/release-action@v1.8.0
+        if: env.FIRMWARE_RELEASE_UPLOAD == 'true'
+        with:
+          name: openwrt-bcm2711-raspberry-pi-4b
+          allowUpdates: true
+          replacesArtifacts: true
+          tag: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
+          body: ${{ env.BUILD_DATE }}
+          commit: ${{ env.CURRENT_BRANCH }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: ${{ env.OPENWRT_ROOT_PATH }}/bin/targets/${{ env.DEVICE_TARGET }}/${{ env.DEVICE_SUBTARGET }}/*
 
