@@ -27,7 +27,7 @@ P.S. 此项目正在测试中，还未完成
 
 Based on :
 完全基于：
-[https://github.com/coolsnowwolf/luci](https://github.com/coolsnowwolf/openwrt)
-[https://github.com/kenzok8/openwrt-packages](https://github.com/kenzok8/openwrt-packages)
+[https://github.com/coolsnowwolf/luci](https://github.com/coolsnowwolf/openwrt)  
+[https://github.com/kenzok8/openwrt-packages](https://github.com/kenzok8/openwrt-packages)  
 无任何修改 也没那水平修改
 
