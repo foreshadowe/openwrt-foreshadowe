@@ -102,19 +102,5 @@ jobs:
           echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
           echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
           echo $PWD
-          rm -rf ./bin/packages
-          rm -rf ./build_dir
-          
-      - name: Deploy Files To Release
-        uses: ncipollo/release-action@v1.8.0
-        if: env.FIRMWARE_RELEASE_UPLOAD == 'true'
-        with:
-          name: openwrt-bcm2711-raspberry-pi-4b
-          allowUpdates: true
-          replacesArtifacts: true
-          tag: bcm2711
-          body: ${{ env.BUILD_DATE }}
-          commit: ${{ env.CURRENT_BRANCH }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: ./lede//bin/targets/bcm27xx/bcm2711/*
+
 
