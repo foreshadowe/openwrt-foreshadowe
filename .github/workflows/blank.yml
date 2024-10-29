@@ -56,6 +56,15 @@ jobs:
           sudo -E apt-get -qq clean
           sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
+      - name: Clone Source Code
+        run: |
+          echo "Clone lede project"
+          git clone https://github.com/coolsnowwolf/lede
+          echo "Copy .config && feeds.conf.default"
+          rm -f ./lede/feeds.conf.default
+          cp $FEED_FILE ./lede/feeds.conf.default
+
+
       - name: Checkout
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         uses: actions/checkout@v4
@@ -89,14 +98,6 @@ jobs:
           df -hT $GITHUB_WORKSPACE
           sudo btrfs filesystem usage $GITHUB_WORKSPACE
 
-
-      - name: Clone Source Code
-        run: |
-          echo "Clone lede project"
-          git clone https://github.com/coolsnowwolf/lede
-          echo "Copy .config && feeds.conf.default"
-          rm -f ./lede/feeds.conf.default
-          cp $FEED_FILE ./lede/feeds.conf.default
           
       - name: Preprocessing
         run: |
